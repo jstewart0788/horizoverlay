@@ -1,35 +1,29 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Encounter from './Encounter'
 import Combatants from './Combatants'
+import { withHelper } from './helpers'
 
-class Overlay extends Component {
-  state = {
-    currentViewIndex: 0
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.Encounter.encdps === '---') {
-      return false
-    }
-    if (this.state.currentViewIndex !== nextState.currentViewIndex) {
-      return true
-    }
-    if (this.state.selectedEncounter) {
-      return false
-    }
-    return true
-  }
-  render() {
-    return (
-      <div className={`damage-meter${this.props.isActive ? '' : ' inactive'}`}>
-        <h3>Awaiting data.</h3>
-        <Encounter {...this.props.Encounter} />
-        <Combatants
-          data={this.props.Combatant}
-          encounterDamage={this.props.Encounter.damage}
-        />
-      </div>
-    )
-  }
+import './css/reboot.css'
+import './css/index.css'
+import './css/overlay.css'
+
+function OverlayRaw(props) {
+  const { isActive, Combatant } = props
+  return (
+    <div
+      className={`damage-meter${isActive ? '' : ' inactive'}`}
+      onContextMenu={props.openConfig}
+      style={{ zoom: props.config.zoom }}
+    >
+      <Combatants
+        data={Combatant}
+        encounterDamage={props.Encounter.damage}
+        config={props.config}
+      />
+      <Encounter {...props.Encounter} config={props.config} />
+    </div>
+  )
 }
 
+const Overlay = withHelper({ WrappedComponent: OverlayRaw })
 export default Overlay
